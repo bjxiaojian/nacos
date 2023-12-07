@@ -23,6 +23,7 @@ import com.alibaba.nacos.api.model.v2.ErrorCode;
 import com.alibaba.nacos.api.model.v2.Result;
 import com.alibaba.nacos.auth.annotation.Secured;
 import com.alibaba.nacos.common.utils.JacksonUtils;
+import com.alibaba.nacos.common.utils.StringUtils;
 import com.alibaba.nacos.core.paramcheck.ExtractorManager;
 import com.alibaba.nacos.core.remote.Connection;
 import com.alibaba.nacos.core.remote.ConnectionManager;
@@ -207,8 +208,10 @@ public class ClientInfoControllerV2 {
         for (String clientId : allClientsRegisteredService) {
             Client client = clientManager.getClient(clientId);
             InstancePublishInfo instancePublishInfo = client.getInstancePublishInfo(service);
-            if (!Objects.equals(instancePublishInfo.getIp(), ip) || !Objects
-                    .equals(port, instancePublishInfo.getPort())) {
+
+            // not filter by ip/port when ip/port not set from RequestParam
+            if (filterOutByIp(ip, instancePublishInfo.getIp()) ||
+                    filterOutByPort(port, instancePublishInfo.getPort())) {
                 continue;
             }
             ObjectNode item = JacksonUtils.createEmptyJsonNode();
@@ -246,9 +249,13 @@ public class ClientInfoControllerV2 {
         for (String clientId : allClientsSubscribeService) {
             Client client = clientManager.getClient(clientId);
             Subscriber subscriber = client.getSubscriber(service);
-            if (!Objects.equals(subscriber.getIp(), ip) || !Objects.equals(port, subscriber.getPort())) {
+
+            // not filter by ip/port when ip/port not set from RequestParam
+            if (filterOutByIp(ip, subscriber.getIp()) ||
+                    filterOutByPort(port, subscriber.getPort())) {
                 continue;
             }
+
             ObjectNode item = JacksonUtils.createEmptyJsonNode();
             item.put("clientId", clientId);
             item.put("ip", subscriber.getIp());
@@ -263,5 +270,19 @@ public class ClientInfoControllerV2 {
             throw new NacosApiException(HttpStatus.NOT_FOUND.value(), ErrorCode.RESOURCE_NOT_FOUND,
                     "clientId [ " + clientId + " ] not exist");
         }
+    }
+
+    private boolean filterOutByIp(String ipFilter, String realIp) {
+        if (StringUtils.isBlank(ipFilter)) {
+            return false;
+        }
+        return !Objects.equals(realIp, ipFilter);
+    }
+
+    private boolean filterOutByPort(Integer portFilter, Integer realPort) {
+        if (portFilter == null) {
+            return false;
+        }
+        return !Objects.equals(realPort, portFilter);
     }
 }
