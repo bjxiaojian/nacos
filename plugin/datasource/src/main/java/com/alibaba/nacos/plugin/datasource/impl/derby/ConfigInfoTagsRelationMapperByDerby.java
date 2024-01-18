@@ -47,7 +47,7 @@ public class ConfigInfoTagsRelationMapperByDerby extends AbstractMapper implemen
         List<Object> paramList = new ArrayList<>();
         StringBuilder where = new StringBuilder(" WHERE ");
         final String baseSql =
-                "SELECT a.id,a.data_id,a.group_id,a.tenant_id,a.app_name,a.content FROM config_info  a LEFT JOIN "
+                "SELECT a.id,a.data_id,a.group_id,a.tenant_id,a.app_name,a.content,a.encrypted_data_key FROM config_info  a LEFT JOIN "
                         + "config_tags_relation b ON a.id=b.id";
         
         where.append(" a.tenant_id=? ");
@@ -95,7 +95,7 @@ public class ConfigInfoTagsRelationMapperByDerby extends AbstractMapper implemen
         List<Object> paramList = new ArrayList<>();
         StringBuilder where = new StringBuilder(" WHERE ");
         final String baseSql =
-                "SELECT a.ID,a.data_id,a.group_id,a.tenant_id,a.app_name,a.content FROM config_info  a LEFT JOIN "
+                "SELECT a.ID,a.data_id,a.group_id,a.tenant_id,a.app_name,a.content,a.encrypted_data_key FROM config_info  a LEFT JOIN "
                         + "config_tags_relation b ON a.id=b.id ";
         
         where.append(" a.tenant_id LIKE ? ");

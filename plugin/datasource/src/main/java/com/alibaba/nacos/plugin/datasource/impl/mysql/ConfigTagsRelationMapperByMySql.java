@@ -47,7 +47,7 @@ public class ConfigTagsRelationMapperByMySql extends AbstractMapper implements C
         List<Object> paramList = new ArrayList<>();
         StringBuilder where = new StringBuilder(" WHERE ");
         final String sql =
-                "SELECT a.id,a.data_id,a.group_id,a.tenant_id,a.app_name,a.content FROM config_info  a LEFT JOIN "
+                "SELECT a.id,a.data_id,a.group_id,a.tenant_id,a.app_name,a.content,a.encrypted_data_key FROM config_info  a LEFT JOIN "
                         + "config_tags_relation b ON a.id=b.id";
         
         where.append(" a.tenant_id=? ");
@@ -94,7 +94,7 @@ public class ConfigTagsRelationMapperByMySql extends AbstractMapper implements C
         List<Object> paramList = new ArrayList<>();
         
         StringBuilder where = new StringBuilder(" WHERE ");
-        final String sqlFetchRows = "SELECT a.id,a.data_id,a.group_id,a.tenant_id,a.app_name,a.content "
+        final String sqlFetchRows = "SELECT a.id,a.data_id,a.group_id,a.tenant_id,a.app_name,a.content,a.encrypted_data_key "
                 + "FROM config_info a LEFT JOIN config_tags_relation b ON a.id=b.id ";
         
         where.append(" a.tenant_id LIKE ? ");
